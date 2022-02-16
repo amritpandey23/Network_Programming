@@ -17,5 +17,6 @@ while True:
     msg, client = server_socket.recvfrom(size)
     msg = msg.decode('utf-8')
     addr, port = client
+    server_socket.sendto(b"hwllo", (addr,port))
     print(f"[{addr}:{port}] : {msg}")
 

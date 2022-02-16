@@ -13,3 +13,5 @@ client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 client.sendto(msg.encode('utf-8'), (server, port))
 
+print(client.recvfrom(1024))
+
