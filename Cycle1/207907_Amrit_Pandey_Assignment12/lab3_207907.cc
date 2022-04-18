@@ -1,64 +1,3 @@
-/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
-/*
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
-
-
-
-/*
-	LAB Assignment #2
-    1. Create a simple dumbbell topology, two client Node1 and Node2 on
-    the left side of the dumbbell and server nodes Node3 and Node4 on the
-    right side of the dumbbell. Let Node5 and Node6 form the bridge of the
-    dumbbell. Use point to point links.
-
-    2. Install a TCP socket instance on Node1 that will connect to Node3.
-
-    3. Install a UDP socket instance on Node2 that will connect to Node4.
-
-    4. Start the TCP application at time 1s.
-
-    5. Start the UDP application at time 20s at rate Rate1 such that it clogs
-    half the dumbbell bridge's link capacity.
-
-    6. Increase the UDP application's rate at time 30s to rate Rate2
-    such that it clogs the whole of the dumbbell bridge's capacity.
-
-    7. Use the ns-3 tracing mechanism to record changes in congestion window
-    size of the TCP instance over time. Use gnuplot/matplotlib to visualise plots of cwnd vs time.
-
-    8. Mark points of fast recovery and slow start in the graphs.
-
-    9. Perform the above experiment for TCP variants Tahoe, Reno and New Reno,
-    all of which are available with ns-3.
-
-	Solution by: Konstantinos Katsaros (K.Katsaros@surrey.ac.uk)
-	based on fifth.cc
-*/
-
-// Network topology
-//
-//       n0 ---+      +--- n2
-//             |      |
-//             n4 -- n5
-//             |      |
-//       n1 ---+      +--- n3
-//
-// - All links are P2P with 500kb/s and 2ms
-// - TCP flow form n0 to n2
-// - UDP flow from n1 to n3
-
 #include <fstream>
 #include <string>
 #include "ns3/core-module.h"
@@ -210,11 +149,8 @@ int main (int argc, char *argv[])
 
   cmd.Parse (argc, argv);
 
-//
-// Explicitly create the nodes required by the topology (shown above).
-//
   NS_LOG_INFO ("Create nodes.");
-  NodeContainer c; // ALL Nodes
+  NodeContainer c; 
   c.Create(6);
 
   NodeContainer n0n4 = NodeContainer (c.Get (0), c.Get (4));
@@ -223,13 +159,9 @@ int main (int argc, char *argv[])
   NodeContainer n3n5 = NodeContainer (c.Get (3), c.Get (5));
   NodeContainer n4n5 = NodeContainer (c.Get (4), c.Get (5));
 
-//
-// Install Internet Stack
-//
   InternetStackHelper internet;
   internet.Install (c);
 
-  // We create the channels first without any IP addressing information
   NS_LOG_INFO ("Create channels.");
   PointToPointHelper p2p;
   p2p.SetDeviceAttribute ("DataRate", StringValue (rate));
@@ -240,7 +172,6 @@ int main (int argc, char *argv[])
   NetDeviceContainer d2d5 = p2p.Install (n2n5);
   NetDeviceContainer d3d5 = p2p.Install (n3n5);
 
-    // Later, we add IP addresses.
   NS_LOG_INFO ("Assign IP Addresses.");
   Ipv4AddressHelper ipv4;
   ipv4.SetBase ("10.1.1.0", "255.255.255.0");
@@ -259,15 +190,9 @@ int main (int argc, char *argv[])
   Ipv4InterfaceContainer i3i5 = ipv4.Assign (d3d5);
 
   NS_LOG_INFO ("Enable static global routing.");
-  //
-  // Turn on global static routing so we can actually be routed across the network.
-  //
   Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
 
-
   NS_LOG_INFO ("Create Applications.");
-
-  // TCP connfection from N0 to N2
 
   uint16_t sinkPort = 8080;
   Address sinkAddress (InetSocketAddress (i2i5.GetAddress (0), sinkPort)); // interface of n2
@@ -332,3 +257,4 @@ int main (int argc, char *argv[])
   Simulator::Destroy ();
   NS_LOG_INFO ("Done.");
 }
+
