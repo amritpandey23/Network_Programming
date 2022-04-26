@@ -207,54 +207,54 @@ int main(int argc, char *argv[]) {
   app->SetStopTime(Seconds(100.));
 
   // TCP connfection from n1 to n2
-  uint16_t sinkPort = 8080;
-  Address sinkAddress(
+  sinkPort = 8081;
+  Address sinkAddress2(
       InetSocketAddress(i12.GetAddress(2), sinkPort)); // interface of n3
   PacketSinkHelper packetSinkHelper(
       "ns3::TcpSocketFactory",
       InetSocketAddress(Ipv4Address::GetAny(), sinkPort));
-  ApplicationContainer sinkApps =
+  sinkApps =
       packetSinkHelper.Install(nodes.Get(2)); // n3 as sink
   sinkApps.Start(Seconds(0.));
   sinkApps.Stop(Seconds(100.));
 
-  Ptr<Socket> ns3TcpSocket = Socket::CreateSocket(
+  Ptr<Socket> ns3TcpSocket2 = Socket::CreateSocket(
       nodes.Get(1), TcpSocketFactory::GetTypeId()); // source at n1
 
   // Trace Congestion window
-  ns3TcpSocket->TraceConnectWithoutContext("CongestionWindow",
+  ns3TcpSocket2->TraceConnectWithoutContext("CongestionWindow",
                                            MakeCallback(&CwndChange));
 
   // Create TCP application at n1
-  Ptr<MyApp> app = CreateObject<MyApp>();
-  app->Setup(ns3TcpSocket, sinkAddress, 1040, 100000, DataRate("250Kbps"));
+  app = CreateObject<MyApp>();
+  app->Setup(ns3TcpSocket2, sinkAddress2, 1040, 100000, DataRate("250Kbps"));
   nodes.Get(1)->AddApplication(app);
   app->SetStartTime(Seconds(1.));
   app->SetStopTime(Seconds(100.));
 
 
   // TCP connfection from n1 to n3
-  uint16_t sinkPort = 8080;
-  Address sinkAddress(
+  sinkPort = 8080;
+  Address sinkAddress3(
       InetSocketAddress(i13.GetAddress(1), sinkPort)); // interface of n3
   PacketSinkHelper packetSinkHelper(
       "ns3::TcpSocketFactory",
       InetSocketAddress(Ipv4Address::GetAny(), sinkPort));
-  ApplicationContainer sinkApps =
+  sinkApps =
       packetSinkHelper.Install(nodes.Get(3)); // n3 as sink
   sinkApps.Start(Seconds(0.));
   sinkApps.Stop(Seconds(100.));
 
-  Ptr<Socket> ns3TcpSocket = Socket::CreateSocket(
+  Ptr<Socket> ns3TcpSocket3 = Socket::CreateSocket(
       nodes.Get(1), TcpSocketFactory::GetTypeId()); // source at n1
 
   // Trace Congestion window
-  ns3TcpSocket->TraceConnectWithoutContext("CongestionWindow",
+  ns3TcpSocket3->TraceConnectWithoutContext("CongestionWindow",
                                            MakeCallback(&CwndChange));
 
   // Create TCP application at n1
-  Ptr<MyApp> app = CreateObject<MyApp>();
-  app->Setup(ns3TcpSocket, sinkAddress, 1040, 100000, DataRate("250Kbps"));
+  app = CreateObject<MyApp>();
+  app->Setup(ns3TcpSocket3, sinkAddress3, 1040, 100000, DataRate("250Kbps"));
   nodes.Get(1)->AddApplication(app);
   app->SetStartTime(Seconds(1.));
   app->SetStopTime(Seconds(100.));
